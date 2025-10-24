@@ -1,0 +1,47 @@
+Installation of docker on each of the 3 virtual machines:
+
+sudo apt update && \
+sudo apt install -y ca-certificates curl gnupg && \
+sudo install -m 0755 -d /etc/apt/keyrings && \
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg && \
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] \
+https://download.docker.com/linux/ubuntu $(. /etc/os-release; echo $VERSION_CODENAME) stable" \
+| sudo tee /etc/apt/sources.list.d/docker.list >/dev/null && \
+sudo apt update && \
+sudo apt install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin && \
+sudo usermod -aG docker seleniumgrid && \
+sudo usermod -aG docker $USER && \
+newgrp docker && \
+docker --version
+
+# Hub VM:
+
+docker network create selenium-grid || true
+docker pull selenium/hub:4
+docker run -d --name selenium-hub \
+--network selenium-grid \
+-p 4442:4442 -p 4443:4443 -p 4444:4444 \
+selenium/hub:4
+
+# Chrome VM
+
+docker pull selenium/node-chrome:4.22.0
+# replace SE_EVENT_BUS_HOST and SE_NODE_HOST with actual private IP (if not the same)
+docker run -d --name node-chrome --restart unless-stopped --shm-size="2g" 
+-p 5555:5555 -e SE_EVENT_BUS_HOST=10.0.0.4 -e SE_EVENT_BUS_PUBLISH_PORT=4442 
+-e SE_EVENT_BUS_SUBSCRIBE_PORT=4443 -e SE_NODE_HOST=10.0.0.5 
+selenium/node-chrome:4.22.0
+
+# Firefox VM
+# replace SE_EVENT_BUS_HOST and SE_NODE_HOST with actual private IP (if not the same)
+docker pull selenium/node-firefox:4.22.0 && \
+docker run -d --name node-firefox --restart unless-stopped --shm-size="2g" -p 5555:5555 \
+-e SE_EVENT_BUS_HOST=10.0.0.4 \
+-e SE_EVENT_BUS_PUBLISH_PORT=4442 \
+-e SE_EVENT_BUS_SUBSCRIBE_PORT=4443 \
+-e SE_NODE_HOST=10.0.2.4 \
+selenium/node-firefox:4.22.0
+
+
+# Health check
+curl http://localhost:4444/status
