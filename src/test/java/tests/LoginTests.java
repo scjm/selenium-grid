@@ -39,14 +39,14 @@ public class LoginTests {
 
     private static String hubUrl() {
         return System.getProperty("hub",
-            System.getenv().getOrDefault("HUB_URL", "http://172.174.154.251:4444"));
+            System.getenv().getOrDefault("HUB_URL", "http://20.125.51.186:4444"));
     }
 
     private static void pause(long millis) {
         try { Thread.sleep(millis); } catch (InterruptedException ignored) {}
     }
 
-    @AfterEach
+    @AfterEach	
     void quit() {
         if (driver != null) driver.quit();
         DriverHolder.clear();

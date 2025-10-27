@@ -1,0 +1,13 @@
+The test steps (per run)
+1.	Start remote browser: new RemoteWebDriver(new URL(hubUrl()), browserOptions)
+2.	Go to site: driver.get("https://www.saucedemo.com/")
+3.	Type username/password, click Login
+4.	Assert the page source contains the expected text
+5.	On failure, Extent captures a screenshot; after each run the driver quits
+How to run (examples)
+# Run on Chrome only
+mvn -Dbrowser=chrome -Dhub=http://<hub-ip>:4444 test
+
+# Run on both Chrome and Firefox (default)
+mvn -Dhub=http://<hub-ip>:4444 test
+Report will be at: target/extent/extent.html.
