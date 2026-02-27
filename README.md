@@ -1,7 +1,3 @@
-Perfect 👍 — here’s your full **`README.md`** version of the 300-word Selenium Grid project description, cleanly formatted for GitHub with headings, code fences, and spacing.
-You can copy-paste this directly into your repo as `README.md`:
-
----
 
 # 🧠 Distributed Selenium Grid with Docker & Azure
 
